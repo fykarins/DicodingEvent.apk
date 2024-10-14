@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -35,10 +36,12 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true // Enable data binding
     }
 }
 
 dependencies {
+    // Dependencies lainnya...
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -47,12 +50,24 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
+    // Tambahkan RecyclerView
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Implementasi Glide untuk memuat gambar
-    implementation(libs.glide)
+    implementation("com.github.bumptech.glide:glide:4.16.0") {
+        exclude(group = "com.android.support")
+    }
+
+    // Annotation Processor untuk Glide
+    // Jika tetap menggunakan KAPT:
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    // Jika beralih ke KSP:
+    // ksp("com.github.bumptech.glide:ksp:4.15.1")
 
     // Implementasi Retrofit untuk API calls
     implementation(libs.retrofit)
@@ -62,6 +77,6 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     // Coroutine dependencies
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }

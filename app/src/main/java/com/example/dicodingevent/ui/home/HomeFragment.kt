@@ -5,34 +5,46 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.dicodingevent.EventAdapter
 import com.example.dicodingevent.databinding.FragmentHomeBinding
+import com.example.dicodingevent.ui.MainViewModel
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    // Menggunakan MainViewModel yang di-share dengan Activity
+    private val mainViewModel: MainViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Mengambil ViewModel
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        // Meng-inflate layout untuk fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
-        // Mengambil root view
         val root: View = binding.root
 
-        // Menghubungkan TextView dengan data dari ViewModel
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            binding.textHome.text = it
+        // Inisialisasi RecyclerView
+        val recyclerView = binding.recyclerViewHome
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // Inisialisasi Adapter
+        val adapter = EventAdapter()
+        recyclerView.adapter = adapter
+
+        // Observe data event dari MainViewModel
+        mainViewModel.listEvents.observe(viewLifecycleOwner) { events ->
+            adapter.submitList(events) // Menggunakan submitList untuk update data
         }
 
-        // Mengembalikan root view
+        // Observe loading state dari MainViewModel
+        mainViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
         return root
     }
 

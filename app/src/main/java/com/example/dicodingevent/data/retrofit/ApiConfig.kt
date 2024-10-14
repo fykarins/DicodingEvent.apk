@@ -15,13 +15,14 @@ class ApiConfig {
             // Set custom timeouts here
             val client = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
-                .connectTimeout(30, TimeUnit.SECONDS) // Set connection timeout
-                .readTimeout(30, TimeUnit.SECONDS) // Set read timeout
-                .writeTimeout(30, TimeUnit.SECONDS) // Set write timeout
+                .connectTimeout(300, TimeUnit.SECONDS) // Set connection timeout
+                .readTimeout(300, TimeUnit.SECONDS) // Set read timeout
+                .writeTimeout(300, TimeUnit.SECONDS) // Set write timeout
+                .retryOnConnectionFailure(true) // Aktifkan retry otomatis
                 .build()
 
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://event-api.dicoding.dev/events?active=0")
+                .baseUrl("https://event-api.dicoding.dev")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()

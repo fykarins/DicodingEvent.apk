@@ -1,54 +1,50 @@
 package com.example.dicodingevent
 
 import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.dicodingevent.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.dicodingevent.ui.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    // Inisialisasi ViewModel menggunakan delegasi by viewModels
+    private val mainViewModel: MainViewModel by viewModels()
+
+    // Deklarasi navController
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inflate menggunakan ActivityMainBinding
+        // Inflate layout dengan menggunakan ActivityMainBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Set Toolbar sebagai ActionBar
         setSupportActionBar(binding.toolbar)
 
-        // Set up BottomNavigationView
-        val navView: BottomNavigationView = binding.navView
+        // Mendapatkan NavController dari NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        navController = navHostFragment.navController
 
-        // Set up NavHostFragment untuk navigasi
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
-        val navController = navHostFragment.navController
-
-        // Mengonfigurasi AppBar
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home,
-                R.id.navigation_upcoming,
-                R.id.navigation_finished
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        // Menghubungkan BottomNavigationView dengan NavController
-        navView.setupWithNavController(navController)
+        // Mengamati loading state dari ViewModel untuk menampilkan ProgressBar
+        mainViewModel.isLoading.observe(this) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
     }
 
-    // Opsional: untuk navigasi up button
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main)!!.findNavController()
-        return navController.navigateUp() || super.onSupportNavigateUp()
+    override fun onResume() {
+        super.onResume()
+
+        val navigateTo = intent.getStringExtra("navigateTo")
+        if (navigateTo == "home") {
+            navController.navigate(R.id.navigation_home)
+        }
     }
 }

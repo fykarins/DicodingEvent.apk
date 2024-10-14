@@ -20,16 +20,13 @@ class UpcomingViewModel : ViewModel() {
     }
 
     private fun fetchUpcomingEvents() {
-        // Menggunakan coroutine untuk memindahkan operasi network ke background thread
         viewModelScope.launch {
             try {
-                // Panggil suspending function dari ApiService
-                val response: Response<EventResponse> = ApiConfig.getApiService().getEvents(active = 0)
+                val response: Response<EventResponse> = ApiConfig.getApiService().getEvents(active = 1)
                 if (response.isSuccessful) {
-                    // Mengakses listEvents alih-alih events
                     _upcomingEvents.value = response.body()?.listEvents ?: listOf()
                 } else {
-                    _upcomingEvents.value = listOf() // Jika response gagal, beri data kosong
+                    _upcomingEvents.value = listOf() // Data kosong jika gagal
                 }
             } catch (e: Exception) {
                 _upcomingEvents.value = listOf() // Pada kegagalan, beri data kosong

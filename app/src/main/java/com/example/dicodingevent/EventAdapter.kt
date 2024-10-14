@@ -1,18 +1,36 @@
 package com.example.dicodingevent
 
+import android.content.Intent
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.dicodingevent.data.response.ListEventsItem
 import com.example.dicodingevent.databinding.ItemEventBinding
 
-class EventAdapter(private var listEvents: List<ListEventsItem> = listOf()) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
+class EventAdapter : ListAdapter<ListEventsItem, EventAdapter.EventViewHolder>(DIFF_CALLBACK) {
 
-    // ViewHolder untuk RecyclerView
     inner class EventViewHolder(private val binding: ItemEventBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(event: ListEventsItem) {
-            binding.tvEventName.text = event.name // Pastikan tvEventName ada di item_event.xml
-            binding.tvEventDescription.text = event.description // Pastikan tvEventDescription ada di item_event.xml
+            // Set event name and description
+            binding.tvEventName.text = event.name
+            binding.tvEventDescription.text = Html.fromHtml(event.description, Html.FROM_HTML_MODE_COMPACT)
+
+            // Load event image using Glide
+            Glide.with(binding.root.context)
+                .load(event.imageUrl)
+                .into(binding.ivEventImage)
+
+            // Set OnClickListener on event name to open DetailActivity
+            binding.tvEventName.setOnClickListener {
+                val context = binding.root.context
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("EVENT_ID", event.id) // Send event ID to DetailActivity
+                context.startActivity(intent)
+            }
         }
     }
 
@@ -22,14 +40,19 @@ class EventAdapter(private var listEvents: List<ListEventsItem> = listOf()) : Re
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
-        holder.bind(listEvents[position])
+        val event = getItem(position)
+        holder.bind(event)
     }
 
-    override fun getItemCount(): Int = listEvents.size
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListEventsItem>() {
+            override fun areItemsTheSame(oldItem: ListEventsItem, newItem: ListEventsItem): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-    // Method untuk memperbarui data di RecyclerView
-    fun updateData(newEvents: List<ListEventsItem>) {
-        listEvents = newEvents
-        notifyDataSetChanged()
+            override fun areContentsTheSame(oldItem: ListEventsItem, newItem: ListEventsItem): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 }

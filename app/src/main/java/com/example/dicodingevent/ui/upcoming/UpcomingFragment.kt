@@ -32,7 +32,7 @@ class UpcomingFragment : Fragment() {
 
         // Setup RecyclerView
         binding.rvUpcomingEvents.layoutManager = LinearLayoutManager(requireContext())
-        eventAdapter = EventAdapter(listOf()) // Awalnya kosong
+        eventAdapter = EventAdapter() // Tidak perlu daftar kosong di sini
         binding.rvUpcomingEvents.adapter = eventAdapter
 
         // Observe ViewModel untuk mendapatkan data event
@@ -44,7 +44,7 @@ class UpcomingFragment : Fragment() {
     private fun observeEvents() {
         upcomingViewModel.upcomingEvents.observe(viewLifecycleOwner, Observer { events ->
             if (events != null && events.isNotEmpty()) {
-                eventAdapter.updateData(events)
+                eventAdapter.submitList(events) // Mengirimkan daftar event ke adapter
             } else {
                 Toast.makeText(requireContext(), "No events available", Toast.LENGTH_SHORT).show()
             }

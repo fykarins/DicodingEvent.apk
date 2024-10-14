@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.dicodingevent.data.response.EventResponse
 import com.example.dicodingevent.data.response.ListEventsItem
 import com.example.dicodingevent.data.retrofit.ApiConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class MainViewModel : ViewModel() {
@@ -19,6 +21,9 @@ class MainViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
+
     companion object {
         private const val TAG = "MainViewModel"
     }
@@ -27,41 +32,26 @@ class MainViewModel : ViewModel() {
         findEvents() // Memanggil findEvents saat ViewModel diinisialisasi
     }
 
-    // Function to find event data from the API
     fun findEvents(active: Int = 0) {
         _isLoading.value = true
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response: Response<EventResponse> = ApiConfig.getApiService().getEvents(active)
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    // Mengakses listEvents alih-alih events
-                    _listEvents.value = response.body()?.listEvents ?: listOf()
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                    if (response.isSuccessful) {
+                        _listEvents.value = response.body()?.listEvents ?: listOf()
+                    } else {
+                        _errorMessage.value = "Error: ${response.message()}"
+                        Log.e(TAG, "onFailure: ${response.message()}")
+                    }
                 }
             } catch (e: Exception) {
-                _isLoading.value = false
-                Log.e(TAG, "onFailure: ${e.message}")
-            }
-        }
-    }
-
-    // Function to post a new review to the API
-    fun postReview(eventId: String, review: String) {
-        _isLoading.value = true
-        viewModelScope.launch {
-            try {
-                val response: Response<EventResponse> = ApiConfig.getApiService().postReview(eventId, "Dicoding", review)
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    // Update UI atau data setelah review diposting
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                    _errorMessage.value = "Exception: ${e.message}"
+                    Log.e(TAG, "onFailure: ${e.message}")
                 }
-            } catch (e: Exception) {
-                _isLoading.value = false
-                Log.e(TAG, "onFailure: ${e.message}")
             }
         }
     }
