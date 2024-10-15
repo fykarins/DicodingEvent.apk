@@ -10,15 +10,12 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    // Untuk mendapatkan semua event berdasarkan status aktif
     @GET("/events")
     suspend fun getEvents(@Query("active") active: Int): Response<EventResponse>
 
-    // Perbaikan endpoint untuk mendapatkan detail event berdasarkan ID
     @GET("/events/{id}")
     suspend fun getDetail(@Path("id") id: String): Response<DetailEventResponse>
 
-    // Untuk mengirimkan review event
     @POST("events/{eventId}/reviews")
     suspend fun postReview(
         @Path("eventId") eventId: String,

@@ -16,7 +16,6 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // Menggunakan MainViewModel yang di-share dengan Activity
     private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -27,20 +26,16 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Inisialisasi RecyclerView
         val recyclerView = binding.recyclerViewHome
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Inisialisasi Adapter
         val adapter = EventAdapter()
         recyclerView.adapter = adapter
 
-        // Observe data event dari MainViewModel
         mainViewModel.listEvents.observe(viewLifecycleOwner) { events ->
-            adapter.submitList(events) // Menggunakan submitList untuk update data
+            adapter.submitList(events)
         }
 
-        // Observe loading state dari MainViewModel
         mainViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
@@ -50,6 +45,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Menghindari memory leak
+        _binding = null
     }
 }

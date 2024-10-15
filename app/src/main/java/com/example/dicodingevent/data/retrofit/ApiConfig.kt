@@ -12,13 +12,12 @@ class ApiConfig {
             val loggingInterceptor =
                 HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-            // Set custom timeouts here
             val client = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
-                .connectTimeout(300, TimeUnit.SECONDS) // Set connection timeout
-                .readTimeout(300, TimeUnit.SECONDS) // Set read timeout
-                .writeTimeout(300, TimeUnit.SECONDS) // Set write timeout
-                .retryOnConnectionFailure(true) // Aktifkan retry otomatis
+                .connectTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(300, TimeUnit.SECONDS)
+                .writeTimeout(300, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
                 .build()
 
             val retrofit = Retrofit.Builder()

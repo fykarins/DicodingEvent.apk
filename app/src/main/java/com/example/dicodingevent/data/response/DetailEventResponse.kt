@@ -4,14 +4,14 @@ import com.google.gson.annotations.SerializedName
 
 data class DetailEventResponse(
 
+	@field:SerializedName("event")
+	val event: Event,
+
 	@field:SerializedName("error")
 	val error: Boolean,
 
 	@field:SerializedName("message")
 	val message: String,
-
-	@field:SerializedName("event")
-	val event: Event
 )
 
 data class Event(
@@ -47,7 +47,7 @@ data class Event(
 	val name: String,
 
 	@field:SerializedName("id")
-	val id: Int,
+	val id: String,
 
 	@field:SerializedName("beginTime")
 	val beginTime: String,

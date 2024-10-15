@@ -15,7 +15,7 @@ import retrofit2.Response
 
 class MainViewModel : ViewModel() {
 
-    private val _listEvents = MutableLiveData<List<ListEventsItem>>() // Menyimpan list events
+    private val _listEvents = MutableLiveData<List<ListEventsItem>>()
     val listEvents: LiveData<List<ListEventsItem>> = _listEvents
 
     private val _isLoading = MutableLiveData<Boolean>()
@@ -29,7 +29,7 @@ class MainViewModel : ViewModel() {
     }
 
     init {
-        findEvents() // Memanggil findEvents saat ViewModel diinisialisasi
+        findEvents()
     }
 
     fun findEvents(active: Int = 0) {

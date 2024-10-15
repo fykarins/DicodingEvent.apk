@@ -1,5 +1,6 @@
 package com.example.dicodingevent.ui.upcoming
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,13 +24,15 @@ class UpcomingViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response: Response<EventResponse> = ApiConfig.getApiService().getEvents(active = 1)
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
                     _upcomingEvents.value = response.body()?.listEvents ?: listOf()
                 } else {
-                    _upcomingEvents.value = listOf() // Data kosong jika gagal
+                    Log.e("UpcomingViewModel", "Failed to fetch upcoming events: ${response.message()}")
+                    _upcomingEvents.value = listOf()
                 }
             } catch (e: Exception) {
-                _upcomingEvents.value = listOf() // Pada kegagalan, beri data kosong
+                Log.e("UpcomingViewModel", "Exception during fetch: ${e.message}")
+                _upcomingEvents.value = listOf() // Clear list on failure
             }
         }
     }

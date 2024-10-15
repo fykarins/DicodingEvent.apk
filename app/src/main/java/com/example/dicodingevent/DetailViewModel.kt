@@ -15,15 +15,12 @@ import retrofit2.Response
 class DetailViewModel : ViewModel() {
     private val apiService = ApiConfig.getApiService()
 
-    // LiveData untuk event detail
     private val _eventDetail = MutableLiveData<DetailEventResponse>()
     val eventDetail: LiveData<DetailEventResponse> get() = _eventDetail
 
-    // LiveData untuk upcoming events
     private val _upcomingEvents = MutableLiveData<List<ListEventsItem>>()
     val upcomingEvents: LiveData<List<ListEventsItem>> = _upcomingEvents
 
-    // Method untuk mendapatkan detail event
     fun fetchEventDetail(eventId: String) {
         viewModelScope.launch {
             try {
@@ -39,7 +36,6 @@ class DetailViewModel : ViewModel() {
         }
     }
 
-    // Method untuk mendapatkan upcoming events
     fun fetchUpcomingEvents() {
         viewModelScope.launch {
             try {
@@ -47,10 +43,10 @@ class DetailViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _upcomingEvents.value = response.body()?.listEvents ?: listOf()
                 } else {
-                    _upcomingEvents.value = listOf() // Data kosong jika gagal
+                    _upcomingEvents.value = listOf()
                 }
             } catch (e: Exception) {
-                _upcomingEvents.value = listOf() // Pada kegagalan, beri data kosong
+                _upcomingEvents.value = listOf()
             }
         }
     }

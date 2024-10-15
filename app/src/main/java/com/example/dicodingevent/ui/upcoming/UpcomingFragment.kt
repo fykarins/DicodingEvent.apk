@@ -27,26 +27,26 @@ class UpcomingFragment : Fragment() {
     ): View {
         _binding = FragmentUpcomingBinding.inflate(inflater, container, false)
 
-        // Setup ViewModel
         upcomingViewModel = ViewModelProvider(this).get(UpcomingViewModel::class.java)
 
-        // Setup RecyclerView
-        binding.rvUpcomingEvents.layoutManager = LinearLayoutManager(requireContext())
-        eventAdapter = EventAdapter() // Tidak perlu daftar kosong di sini
-        binding.rvUpcomingEvents.adapter = eventAdapter
-
-        // Observe ViewModel untuk mendapatkan data event
+        setupRecyclerView()
         observeEvents()
 
         return binding.root
     }
 
+    private fun setupRecyclerView() {
+        binding.rvUpcomingEvents.layoutManager = LinearLayoutManager(requireContext())
+        eventAdapter = EventAdapter()
+        binding.rvUpcomingEvents.adapter = eventAdapter
+    }
+
     private fun observeEvents() {
         upcomingViewModel.upcomingEvents.observe(viewLifecycleOwner, Observer { events ->
-            if (events != null && events.isNotEmpty()) {
-                eventAdapter.submitList(events) // Mengirimkan daftar event ke adapter
+            if (events.isNotEmpty()) {
+                eventAdapter.submitList(events)
             } else {
-                Toast.makeText(requireContext(), "No events available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No upcoming events available", Toast.LENGTH_SHORT).show()
             }
         })
     }
