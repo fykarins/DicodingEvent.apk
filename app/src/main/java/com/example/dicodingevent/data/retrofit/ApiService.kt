@@ -16,6 +16,12 @@ interface ApiService {
     @GET("/events/{id}")
     suspend fun getDetail(@Path("id") id: String): Response<DetailEventResponse>
 
+    @GET("events")
+    suspend fun searchEvents(
+        @Query("active") active: Int,
+        @Query("q") query: String
+    ): Response<EventResponse>
+
     @POST("events/{eventId}/reviews")
     suspend fun postReview(
         @Path("eventId") eventId: String,

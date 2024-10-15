@@ -15,7 +15,6 @@ class EventAdapter : ListAdapter<ListEventsItem, EventAdapter.EventViewHolder>(D
 
     inner class EventViewHolder(private val binding: ItemEventBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(event: ListEventsItem) {
-
             binding.tvEventName.text = event.name
             binding.tvEventDescription.text = Html.fromHtml(event.description, Html.FROM_HTML_MODE_COMPACT)
 
@@ -23,7 +22,7 @@ class EventAdapter : ListAdapter<ListEventsItem, EventAdapter.EventViewHolder>(D
                 .load(event.imageLogo)
                 .into(binding.ivEventImage)
 
-            binding.tvEventName.setOnClickListener {
+            binding.root.setOnClickListener {
                 val context = binding.root.context
                 val intent = Intent(context, DetailActivity::class.java)
                 intent.putExtra("EVENT_ID", event.id)

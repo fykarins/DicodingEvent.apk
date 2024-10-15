@@ -72,6 +72,8 @@ dependencies {
     // Implementasi Retrofit untuk API calls
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
 
     // Logging interceptor untuk Retrofit
     implementation(libs.logging.interceptor)

@@ -9,8 +9,9 @@ import java.util.concurrent.TimeUnit
 class ApiConfig {
     companion object {
         fun getApiService(): ApiService {
-            val loggingInterceptor =
-                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
@@ -21,7 +22,7 @@ class ApiConfig {
                 .build()
 
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://event-api.dicoding.dev")
+                .baseUrl("https://event-api.dicoding.dev/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
